@@ -1,0 +1,38 @@
+<fulfillmentToken fulfillmentType="loan" auth="user" xmlns="http://ns.adobe.com/adept">
+  <distributor>urn:uuid:501e16ca-f45c-4a0c-9a9f-8a270a9f2ed6</distributor>
+  <operatorURL>https://rps2images.ebscohost.com/fulfillment</operatorURL>
+  <transaction>s3122557:61223073:407995:1770643954454:1193679046</transaction>
+  <purchase>2026-02-09T13:32:34+00:00</purchase>
+  <expiration>2026-02-09T19:32:34+00:00</expiration>
+  <resourceItemInfo>
+    <resource>urn:uuid:9a9ec92e-dc40-442a-af72-ad48a8e066ad</resource>
+    <resourceItem>1</resourceItem>
+    <metadata>
+      <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">Computer Architecture</dc:title>
+      <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Hennessy, John L.,Asanović, Krste.,Patterson, David A.</dc:creator>
+      <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">Elsevier Science</dc:publisher>
+      <dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">application/pdf</dc:format>
+      <dc:language xmlns:dc="http://purl.org/dc/elements/1.1/">eng</dc:language>
+    </metadata>
+    <licenseToken>
+      <resource>urn:uuid:9a9ec92e-dc40-442a-af72-ad48a8e066ad</resource>
+      <permissions>
+        <display>
+          <until>2026-03-02T13:31:34+00:00</until>
+        </display>
+        <excerpt>
+          <until>2026-03-02T13:31:34+00:00</until>
+          <count initial="40"/>
+        </excerpt>
+        <print>
+          <until>2026-03-02T13:31:34+00:00</until>
+          <count initial="40"/>
+        </print>
+        <play>
+          <until>2026-03-02T13:31:34+00:00</until>
+        </play>
+      </permissions>
+    </licenseToken>
+  </resourceItemInfo>
+  <hmac>PJAptmyZP6U5wCSjVTjU/GJA1pk=</hmac>
+</fulfillmentToken>
