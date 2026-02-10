@@ -1,13 +1,19 @@
+import { headers } from "next/headers";
+
 export default async function Home() {
-  const res = await fetch("api/hello", {
+  const headersList = headers();
+  const host = headersList.get("host");
+
+  const res = await fetch(`https://${host}/api/hello`, {
     cache: "no-store",
   });
+
   const data = await res.json();
 
   return (
     <main style={{ padding: 24, fontFamily: "system-ui" }}>
       <h1>System and Device</h1>
-      <p>This data comes from a dynamic API:</p>
+      <p>Data from API:</p>
       <pre
         style={{
           background: "#f5f5f5",
