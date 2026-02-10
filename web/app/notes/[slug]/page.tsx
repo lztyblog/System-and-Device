@@ -1,54 +1,65 @@
+// web/app/notes/[slug]/page.tsx
 import Link from "next/link";
-import { getNote } from "@/app/lib/notes";
+import { headers } from "next/headers";
+
+function baseUrlFromHeaders(h: Headers) {
+  const host = h.get("host") ?? "localhost:3000";
+  const proto =
+    h.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
+  return `${proto}://${host}`;
+}
+
+type NoteDetail = {
+  slug: string;
+  title: string;
+  content: string;
+  time: string;
+};
 
 export default async function NotePage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const note = getNote(params.slug);
-  if (!note) {
+  const h = await headers();
+  const baseUrl = baseUrlFromHeaders(h);
+
+  // ✅ 关键：这里一定是 ${params.slug}
+  const res = await fetch(`${baseUrl}/api/notes/${params.slug}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
     return (
-      <main className="mx-auto max-w-3xl px-6 py-16">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white">
-          <div className="text-xl font-semibold">未找到内容</div>
-          <div className="mt-2 text-white/70">这个条目可能被删除或改名了。</div>
-          <Link className="mt-6 inline-block text-white underline" href="/">
-            返回首页
-          </Link>
-        </div>
+      <main style={{ padding: 24 }}>
+        <h1>找不到这条 Note</h1>
+        <p>
+          slug: <code>{params.slug}</code>
+        </p>
+        <p>
+          API: <code>{baseUrl}/api/notes/{params.slug}</code>
+        </p>
+        <Link href="/">返回首页</Link>
       </main>
     );
   }
 
+  const data = (await res.json()) as NoteDetail;
+
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10 text-white">
-      <Link href="/" className="text-white/70 hover:text-white">
+    <main style={{ padding: 24, maxWidth: 900, margin: "0 auto" }}>
+      <Link href="/" style={{ display: "inline-block", marginBottom: 16 }}>
         ← 返回首页
       </Link>
 
-      <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-7">
-        <div className="text-sm text-white/60">
-          {note.category} · 更新于 {new Date(note.updatedAt).toLocaleString()}
-        </div>
-        <h1 className="mt-3 text-3xl font-semibold">{note.title}</h1>
-        <p className="mt-3 text-white/75">{note.desc}</p>
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          {note.tags.map((t) => (
-            <span
-              key={t}
-              className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-sm text-white/70"
-            >
-              #{t}
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-8 whitespace-pre-wrap leading-7 text-white/85">
-          {note.content.trim()}
-        </div>
+      <h1 style={{ fontSize: 32, marginBottom: 8 }}>{data.title}</h1>
+      <div style={{ opacity: 0.7, marginBottom: 20 }}>
+        <span>slug: {data.slug}</span> · <span>{data.time}</span>
       </div>
+
+      <article style={{ lineHeight: 1.8, fontSize: 16, whiteSpace: "pre-wrap" }}>
+        {data.content}
+      </article>
     </main>
   );
 }
