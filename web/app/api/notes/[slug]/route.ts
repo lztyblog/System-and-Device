@@ -1,10 +1,15 @@
-import { getNote } from "@/app/lib/notes";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  _req: Request,
-  { params }: { params: { slug: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ slug: string }> }
 ) {
-  const note = getNote(params.slug);
-  if (!note) return Response.json({ error: "Not found" }, { status: 404 });
-  return Response.json(note);
+  const { slug } = await context.params;
+
+  return NextResponse.json({
+    slug,
+    title: `Note: ${slug}`,
+    content: `This is the content for note "${slug}".`,
+    time: new Date().toISOString(),
+  });
 }
