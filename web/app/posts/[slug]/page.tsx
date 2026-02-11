@@ -1,47 +1,39 @@
-// web/app/posts/[slug]/page.tsx
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
-import { getPostBySlug, getAllPostSlugs } from "@/app/lib/posts";
+import { notFound } from "next/navigation";
+import { getPostBySlug } from "@/app/lib/posts"; // ← 如果你原来不是这个路径，保持原来的
 
-export const dynamic = "force-static";
+export default async function BlogPostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const slug = params.slug;
 
-export function generateStaticParams() {
-  return getAllPostSlugs().map((slug) => ({ slug }));
-}
+  // getPostBySlug 可能是同步也可能是异步；await 两种情况都兼容
+  const post = await getPostBySlug(slug);
+  if (!post) notFound();
 
-export default function PostPage({ params }: { params: { slug: string } }) {
-  const post = getPostBySlug(params.slug);
+  // 你的 post 结构是 { meta: PostMeta, content: string }
+  const {
+    meta: { title, date, description },
+    content,
+  } = post;
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
-      <Link href="/posts" className="text-sm text-white/70 hover:text-white">
-        ← 返回 Posts
-      </Link>
+    <main style={{ padding: 24, maxWidth: 900, margin: "0 auto" }}>
+      {/* 如果你的列表页路由不是 /posts，把这里改成对应路径 */}
+      <Link href="/posts">← Back</Link>
 
-      <h1 className="mt-6 text-3xl font-semibold tracking-tight">{post.title}</h1>
+      <h1 style={{ marginTop: 16 }}>{title}</h1>
+      <p style={{ opacity: 0.7 }}>
+        {slug} · {date ?? ""}
+      </p>
+      {description ? <p style={{ opacity: 0.85 }}>{description}</p> : null}
 
-      <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-white/60">
-        {post.date ? <span>{post.date}</span> : null}
-        <span className="text-white/30">•</span>
-        <span>slug: {post.slug}</span>
+      <div style={{ marginTop: 24 }}>
+        <ReactMarkdown>{content}</ReactMarkdown>
       </div>
-
-      {post.tags?.length ? (
-        <div className="mt-4 flex flex-wrap gap-2">
-          {post.tags.map((t) => (
-            <span
-              key={t}
-              className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70"
-            >
-              #{t}
-            </span>
-          ))}
-        </div>
-      ) : null}
-
-      <article className="prose prose-invert mt-8 max-w-none">
-        <ReactMarkdown>{post.content}</ReactMarkdown>
-      </article>
     </main>
   );
 }

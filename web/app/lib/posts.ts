@@ -1,57 +1,78 @@
-import fs from "node:fs";
-import path from "node:path";
+// web/app/lib/posts.ts
+import fs from "fs";
+import path from "path";
 import matter from "gray-matter";
-import { remark } from "remark";
-import html from "remark-html";
 
-const postsDir = path.join(process.cwd(), "content/posts");
+const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
 export type PostMeta = {
   slug: string;
   title: string;
-  date: string;
-  tags?: string[];
-  summary?: string;
+  date?: string;          // ✅ 永远是 string
+  description?: string;
 };
 
-export async function getAllPosts(): Promise<PostMeta[]> {
-  const files = fs.readdirSync(postsDir).filter((f) => f.endsWith(".md"));
-  const posts = files.map((file) => {
-    const slug = file.replace(/\.md$/, "");
-    const fullPath = path.join(postsDir, file);
+function toTime(v: unknown) {
+  if (!v) return 0;
+  if (v instanceof Date) return v.getTime();
+  const t = new Date(String(v)).getTime();
+  return Number.isFinite(t) ? t : 0;
+}
+
+function toDateString(v: unknown): string | undefined {
+  if (!v) return undefined;
+  if (v instanceof Date) return v.toISOString();
+  const s = String(v).trim();
+  return s ? s : undefined;
+}
+
+export function getAllPosts(): PostMeta[] {
+  if (!fs.existsSync(POSTS_DIR)) return [];
+
+  const files = fs
+    .readdirSync(POSTS_DIR)
+    .filter((f) => f.endsWith(".md") || f.endsWith(".mdx"));
+
+  const posts: PostMeta[] = files.map((filename) => {
+    const slug = filename.replace(/\.mdx?$/, "");
+    const fullPath = path.join(POSTS_DIR, filename);
     const raw = fs.readFileSync(fullPath, "utf8");
     const { data } = matter(raw);
 
     return {
       slug,
-      title: String(data.title ?? slug),
-      date: String(data.date ?? ""),
-      tags: (data.tags ?? []) as string[],
-      summary: String(data.summary ?? ""),
+      title: (data as any)?.title ? String((data as any).title) : slug,
+      date: toDateString((data as any)?.date),
+      description: (data as any)?.description
+        ? String((data as any).description)
+        : undefined,
     };
   });
 
-  // 日期倒序
-  posts.sort((a, b) => (a.date < b.date ? 1 : -1));
+  // ✅ 排序：新日期在前
+  posts.sort((a, b) => toTime(b.date) - toTime(a.date));
   return posts;
 }
 
-export async function getPostBySlug(slug: string) {
-  const fullPath = path.join(postsDir, `${slug}.md`);
+export function getPostBySlug(slug: string) {
+  const mdPath = path.join(POSTS_DIR, `${slug}.md`);
+  const mdxPath = path.join(POSTS_DIR, `${slug}.mdx`);
+
+  const fullPath = fs.existsSync(mdPath) ? mdPath : mdxPath;
+  if (!fs.existsSync(fullPath)) return null;
+
   const raw = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(raw);
-
-  const processed = await remark().use(html).process(content);
-  const contentHtml = processed.toString();
 
   return {
     meta: {
       slug,
-      title: String(data.title ?? slug),
-      date: String(data.date ?? ""),
-      tags: (data.tags ?? []) as string[],
-      summary: String(data.summary ?? ""),
-    } satisfies PostMeta,
-    contentHtml,
+      title: (data as any)?.title ? String((data as any).title) : slug,
+      date: toDateString((data as any)?.date),
+      description: (data as any)?.description
+        ? String((data as any).description)
+        : undefined,
+    } as PostMeta,
+    content,
   };
 }

@@ -68,7 +68,8 @@ export function uniq<T>(arr: T[]) {
 
 export function getAllMeta() {
   const categories = uniq(NOTES.map((n) => n.category));
-  const tags = uniq(NOTES.flatMap((n) => n.tags)).sort((a, b) => a.localeCompare(b));
+  const tags = uniq(NOTES.flatMap((n) => n.tags)).sort((a, b) => String(a).localeCompare(String(b)))
+
   return { categories, tags };
 }
 

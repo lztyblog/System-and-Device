@@ -32,7 +32,7 @@ function getPosts(): PostMeta[] {
         desc: data.desc as string | undefined,
       };
     })
-    .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+    .sort((a, b) => Date.parse(String(b.date ?? "")) - Date.parse(String(a.date ?? "")))
 }
 
 export default function PostsPage() {
@@ -62,7 +62,12 @@ export default function PostsPage() {
                   <div className="text-lg font-medium">{p.title}</div>
                   {p.desc ? <div className="text-zinc-400 mt-1">{p.desc}</div> : null}
                 </div>
-                {p.date ? <div className="text-zinc-400 text-sm">{p.date}</div> : null}
+                {p.date ? (
+                  <div className="text-zinc-400 text-sm">
+                    {String(p.date).slice(0, 10)}
+                  </div>
+                ) : null}
+
               </div>
               <div className="text-zinc-500 text-sm mt-3">slug: {p.slug}</div>
             </Link>

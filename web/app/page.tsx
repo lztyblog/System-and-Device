@@ -54,10 +54,12 @@ function countTags(items: Note[]) {
     .slice(0, 12);
 }
 
+const DOWNLOAD_HREF = "/download?root=download";
+
 export default async function Home({
   searchParams,
 }: {
-  searchParams:Promise< { q?: string; tag?: string; cat?: string }>;
+  searchParams: Promise<{ q?: string; tag?: string; cat?: string }>;
 }) {
   const sp = await searchParams;
   const h = await headers();
@@ -115,19 +117,21 @@ export default async function Home({
             >
               首页
             </Link>
+
             <Link
               className="rounded-lg px-3 py-2 text-zinc-300 hover:bg-white/5 hover:text-white"
-              href="/api/hello"
-              prefetch={false}
+              href="/blog"
             >
-              API
+              Blog
             </Link>
+
+            {/* ✅ 改这里：不再下载 GitHub zip，直接打开资源站页面 */}
             <Link
               className="rounded-lg px-3 py-2 text-zinc-300 hover:bg-white/5 hover:text-white"
-              href="/api/notes"
+              href={DOWNLOAD_HREF}
               prefetch={false}
             >
-              Notes
+              Download
             </Link>
           </nav>
         </div>
@@ -161,22 +165,23 @@ export default async function Home({
                 </p>
               </div>
 
+              {/* Hero Actions */}
               <div className="flex flex-wrap items-center gap-2">
                 <Link
                   className="group inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-black shadow-sm hover:bg-zinc-200"
-                  href="/api/hello"
-                  prefetch={false}
+                  href="/blog"
                 >
-                  打开 API JSON
+                  打开 Blog
                   <span className="opacity-70 group-hover:opacity-100">↗</span>
                 </Link>
 
+                {/* ✅ 改这里：不再 zip，打开 /download */}
                 <Link
                   className="inline-flex items-center gap-2 rounded-xl bg-white/5 px-4 py-2 text-sm text-zinc-200 ring-1 ring-white/10 hover:bg-white/10"
-                  href="/api/notes"
+                  href={DOWNLOAD_HREF}
                   prefetch={false}
                 >
-                  打开 /api/notes
+                  Download
                   <span className="opacity-70">↗</span>
                 </Link>
 
@@ -253,7 +258,7 @@ export default async function Home({
             </div>
           </div>
 
-          {/* API Card */}
+          {/* API Card (kept for status display, but no "open api" buttons) */}
           <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 ring-1 ring-white/10">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold tracking-wide">API 状态</h2>
@@ -266,10 +271,7 @@ export default async function Home({
               <div className="flex items-center justify-between">
                 <span className="text-xs text-zinc-400">/api/hello</span>
                 <span
-                  className={cx(
-                    "text-xs",
-                    hello.error ? "text-rose-300" : "text-emerald-300"
-                  )}
+                  className={cx("text-xs", hello.error ? "text-rose-300" : "text-emerald-300")}
                 >
                   {hello.error ? "ERROR" : "OK"}
                 </span>
@@ -280,26 +282,9 @@ export default async function Home({
               </pre>
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              <Link
-                className="rounded-xl bg-white/5 px-3 py-2 text-center text-sm text-zinc-200 ring-1 ring-white/10 hover:bg-white/10"
-                href="/api/hello"
-                prefetch={false}
-              >
-                打开 /api/hello
-              </Link>
-              <Link
-                className="rounded-xl bg-white/5 px-3 py-2 text-center text-sm text-zinc-200 ring-1 ring-white/10 hover:bg-white/10"
-                href="/api/notes"
-                prefetch={false}
-              >
-                打开 /api/notes
-              </Link>
-            </div>
-
             <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-zinc-300">
-              提示：如果你看到 hydration 报错，多半是浏览器插件注入属性。
-              你已经在 <code className="text-zinc-100">layout.tsx</code> 加了{" "}
+              提示：如果你看到 hydration 报错，多半是浏览器插件注入属性。你已经在{" "}
+              <code className="text-zinc-100">layout.tsx</code> 加了{" "}
               <code className="text-zinc-100">suppressHydrationWarning</code>，基本可压住。
             </div>
           </div>
