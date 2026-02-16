@@ -1,0 +1,58 @@
+PANDAS 核心速查表（第1周 · 精简中文版）
+
+1）创建 DataFrame
+
+import pandas as pd
+
+从字典创建
+
+df = pd.DataFrame({‘Name’: names, ‘Births’: births})
+
+从 CSV 文件读取
+
+df = pd.read_csv(“file.csv”)
+
+2）查看数据
+
+df.head() # 查看前5行 df.tail() # 查看后5行 df.columns # 查看列名
+df.dtypes # 查看每列数据类型 df.info() # 查看整体信息 df.shape #
+查看数据规模（行数, 列数）
+
+3）选择数据（最重要）
+
+选择一列
+
+df[‘Name’]
+
+选择多列
+
+df[[‘Name’, ‘Births’]]
+
+按位置选择行
+
+df.iloc[0] # 第1行 df.iloc[0:3] # 前3行
+
+按条件筛选行
+
+df[df[‘Births’] > 2000]
+
+4）排序
+
+df.sort_values(‘Births’) # 升序 df.sort_values(‘Births’,
+ascending=False) # 降序
+
+5）基本统计
+
+df[‘Births’].max() # 最大值 df[‘Births’].min() # 最小值
+df[‘Births’].mean() # 平均值 df[‘Births’].sum() # 总和
+
+6）转换 / 保存
+
+df.to_numpy() # 转换为 NumPy 数组 df.to_csv(“file.csv”) # 保存为 CSV
+文件
+
+如果你只记住 5 个命令：
+
+head() info() columns df[‘column_name’] iloc[]
+
+掌握这些足够完成大部分第1周练习题。

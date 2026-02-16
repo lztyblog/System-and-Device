@@ -1,0 +1,58 @@
+PANDAS CORE CHEAT SHEET (Week 1 – Minimal Version)
+
+1) Creating a DataFrame
+
+import pandas as pd
+
+From dictionary
+
+df = pd.DataFrame({‘Name’: names, ‘Births’: births})
+
+From CSV
+
+df = pd.read_csv(“file.csv”)
+
+2) Viewing Data
+
+df.head() # First 5 rows df.tail() # Last 5 rows df.columns # Column
+names df.dtypes # Data types df.info() # Overall information df.shape #
+(rows, columns)
+
+3) Selecting Data (Most Important)
+
+Select one column
+
+df[‘Name’]
+
+Select multiple columns
+
+df[[‘Name’, ‘Births’]]
+
+Select rows by position
+
+df.iloc[0] # First row df.iloc[0:3] # First 3 rows
+
+Select rows by condition
+
+df[df[‘Births’] > 2000]
+
+4) Sorting
+
+df.sort_values(‘Births’) # Ascending df.sort_values(‘Births’,
+ascending=False) # Descending
+
+5) Basic Statistics
+
+df[‘Births’].max() df[‘Births’].min() df[‘Births’].mean()
+df[‘Births’].sum()
+
+6) Converting / Saving
+
+df.to_numpy() # Convert to NumPy array df.to_csv(“file.csv”) # Save to
+CSV
+
+If you remember only 5 commands:
+
+head() info() columns df[‘column_name’] iloc[]
+
+This is enough for most Week 1 exercises.
